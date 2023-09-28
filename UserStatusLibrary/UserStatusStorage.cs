@@ -100,4 +100,29 @@ public class UserStatusStorage
         }
         return responseDictionary;
     }
+    
+    public static string LocalisationUkr(string engMessage)
+    {
+        switch (engMessage)
+        {
+            case " was online just now":
+                return " був(ла) в мережі щойно";
+            case " was online 1 minute ago":
+                return " був(ла) в мережі 1 хвилину тому";
+            case " was online a couple minutes ago":
+                return " був(ла) в мережі кілька хвилин тому";
+            case " was online 1 hour ago":
+                return " був(ла) в мережі 1 годину тому";
+            case " was online today":
+                return " був(ла) в мережі сьогодні";
+            case " was online yesterday":
+                return " був(ла) в мережі вчора";
+            case " was online this week":
+                return " був(ла) в мережі цього тижня";
+            default:
+                return " був(ла) в мережі давно";
+        }
+
+        
+    }
 }

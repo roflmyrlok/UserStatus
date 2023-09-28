@@ -150,5 +150,4 @@ public class UnitTestUserStatusSolution
 		// Assert
 		Assert.Equal((nickname, " was online a long time ago"), message);
 	}
-
 }
