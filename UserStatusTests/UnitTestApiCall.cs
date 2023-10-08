@@ -9,7 +9,7 @@ public class UnitTestApiCall
     public static async Task UnitTestFillDIct()
     {
         //arrange
-        string link = "https://sef.podkolzin.consulting/api/users/lastSeen";
+        string link = "https://sef.podkolzin.consulting/api/users/lastSeen?offset=";
         // Act
         var result = await UserStatusStorage.FillUserStatusDictionary(link); // Await the async method
 
@@ -21,7 +21,7 @@ public class UnitTestApiCall
 	public static async Task UnitTestApiCall1()
 	{
         //arrange
-        string link = "https://sef.podkolzin.consulting/api/users/lastSeen";
+        string link = "https://sef.podkolzin.consulting/api/users/lastSeen?offset=";
 		// Act
         var result = await UserStatusStorage.ApiCall1(link,"0"); // Await the async method
 

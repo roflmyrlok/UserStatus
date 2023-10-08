@@ -4,6 +4,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UserStatusLibrary", "UserSt
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UserStatusTests", "UserStatusTests\UserStatusTests.csproj", "{BF98BF05-CB41-4C3F-9738-8E768C35683A}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WebApp", "WebApp\WebApp.csproj", "{97BA14D3-4DC5-471B-8D9A-E3B47CE5A89B}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -18,5 +20,9 @@ Global
 		{BF98BF05-CB41-4C3F-9738-8E768C35683A}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{BF98BF05-CB41-4C3F-9738-8E768C35683A}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{BF98BF05-CB41-4C3F-9738-8E768C35683A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{97BA14D3-4DC5-471B-8D9A-E3B47CE5A89B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{97BA14D3-4DC5-471B-8D9A-E3B47CE5A89B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{97BA14D3-4DC5-471B-8D9A-E3B47CE5A89B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{97BA14D3-4DC5-471B-8D9A-E3B47CE5A89B}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal

@@ -79,7 +79,7 @@ public class UserStatusStorage
 		using HttpClient client = new HttpClient();
 		try
 		{
-			var url = link + "?offset=" + offset;
+			var url = link + offset;
 			var response = await client.GetAsync(url);
 			if (response.IsSuccessStatusCode)
 			{
