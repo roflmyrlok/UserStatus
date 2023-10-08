@@ -5,23 +5,35 @@ using Moq.Protected;
 
 public class UnitTestApiCall
 {
+    [Fact]
+    public static async Task UnitTestFillDIct()
+    {
+        //arrange
+        string link = "https://sef.podkolzin.consulting/api/users/lastSeen";
+        // Act
+        var result = await UserStatusStorage.FillUserStatusDictionary(link); // Await the async method
+
+        // Assert
+        Assert.IsType<Dictionary<string,string>>(result);
+    }
+    
 	[Fact]
-	public static async Task FillDIct()
+	public static async Task UnitTestApiCall1()
 	{
+        //arrange
+        string link = "https://sef.podkolzin.consulting/api/users/lastSeen";
 		// Act
-		var storg = new UserStatusStorage();
-		var result = await UserStatusStorage.FillDictionary(); // Await the async method
+        var result = await UserStatusStorage.ApiCall1(link,"0"); // Await the async method
 
 		// Assert
-		Assert.IsType<Dictionary<string, string>>(result);
+		Assert.Equal(1,result.Item2);
 	}
 
-	[Fact]
-	public async Task FillResponseObject_SuccessfulResponse()
-	{
-		// Arrange
-		var httpClientMock = new Mock<HttpClient>();
-		string fakeJsonResponse = @"{
+    [Fact]
+    public async Task UnitTestParseData()
+    {
+        // Arrange
+        string fakeJsonResponse = @"{
     ""total"": 217,
     ""data"": [
         {
@@ -206,20 +218,8 @@ public class UnitTestApiCall
         }
     ]
 }";
-
-		var successfulResponse = new HttpResponseMessage(HttpStatusCode.OK)
-		{
-			Content = new StringContent(fakeJsonResponse)
-		};
-
-		httpClientMock
-			.Setup(client => client.GetAsync(It.IsAny<string>()))
-			.ReturnsAsync(successfulResponse);
-
-		// Act
-		var result = await UserStatusStorage.FillResponseObject();
-
-		// Assert
-		Assert.Equal(1, result); // You may adjust this based on your expected behavior
-	}
+        var result = UserStatusStorage.ParseData(fakeJsonResponse);
+        
+        Assert.Equal(20, result.data.Count);
+    }
 }
