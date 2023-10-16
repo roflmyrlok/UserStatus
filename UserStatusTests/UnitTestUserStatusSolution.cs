@@ -8,6 +8,7 @@ namespace UserStatusTests;
 
 public class UnitTestUserStatusSolution
 {
+	UserStatusStorage ss = new UserStatusStorage();
 	[Fact]
 	public void testOnline()
 	{
@@ -18,7 +19,7 @@ public class UnitTestUserStatusSolution
 		DateTime lastSeenTime = currentTime.AddSeconds(-10); // Online just now
 
 		// Act
-		var message = UserStatusStorage.SetMessage(isOnline, nickname, currentTime, lastSeenTime);
+		var message = ss.SetMessage(isOnline, nickname, currentTime, lastSeenTime);
 
 		// Assert
 		Assert.Equal(("is online now"), message.Item2);
@@ -33,7 +34,7 @@ public class UnitTestUserStatusSolution
 		DateTime lastSeenTime = currentTime.AddSeconds(-15); // Online just now
 
 		// Act
-		var message = UserStatusStorage.SetMessage(isOnline, nickname, currentTime, lastSeenTime);
+		var message = ss.SetMessage(isOnline, nickname, currentTime, lastSeenTime);
 
 		// Assert
 		Assert.Equal((" was online just now"), message.Item2);
@@ -49,7 +50,7 @@ public class UnitTestUserStatusSolution
 		DateTime lastSeenTime = currentTime.AddSeconds(-45); // " was online 1 minute ago"
 
 		// Act
-		var message = UserStatusStorage.SetMessage(isOnline, nickname, currentTime, lastSeenTime);
+		var message = ss.SetMessage(isOnline, nickname, currentTime, lastSeenTime);
 
 		// Assert
 		Assert.Equal((" was online 1 minute ago"), message.Item2);
@@ -65,7 +66,7 @@ public class UnitTestUserStatusSolution
 		DateTime lastSeenTime = currentTime.AddSeconds(-1200); // online a couple minutes ago
 
 		// Act
-		var message = UserStatusStorage.SetMessage(isOnline, nickname, currentTime, lastSeenTime);
+		var message = ss.SetMessage(isOnline, nickname, currentTime, lastSeenTime);
 
 		// Assert
 		Assert.Equal((" was online a couple minutes ago"), message.Item2);
@@ -81,7 +82,7 @@ public class UnitTestUserStatusSolution
 		DateTime lastSeenTime = currentTime.AddSeconds(-5000); // " was online 1 hour ago"
 
 		// Act
-		var message = UserStatusStorage.SetMessage(isOnline, nickname, currentTime, lastSeenTime);
+		var message = ss.SetMessage(isOnline, nickname, currentTime, lastSeenTime);
 
 		// Assert
 		Assert.Equal((nickname, " was online 1 hour ago"), message);
@@ -97,7 +98,7 @@ public class UnitTestUserStatusSolution
 		DateTime lastSeenTime = currentTime.AddHours(-6); // " was online today"
 
 		// Act
-		var message = UserStatusStorage.SetMessage(isOnline, nickname, currentTime, lastSeenTime);
+		var message = ss.SetMessage(isOnline, nickname, currentTime, lastSeenTime);
 
 		// Assert
 		Assert.Equal((nickname, " was online today"), message);
@@ -113,7 +114,7 @@ public class UnitTestUserStatusSolution
 		DateTime lastSeenTime = currentTime.AddHours(-12); // " was online yesterday"
 
 		// Act
-		var message = UserStatusStorage.SetMessage(isOnline, nickname, currentTime, lastSeenTime);
+		var message = ss.SetMessage(isOnline, nickname, currentTime, lastSeenTime);
 
 		// Assert
 		Assert.Equal((nickname, " was online yesterday"), message);
@@ -129,7 +130,7 @@ public class UnitTestUserStatusSolution
 		DateTime lastSeenTime = currentTime.AddHours(-55); // " was online this week"
 
 		// Act
-		var message = UserStatusStorage.SetMessage(isOnline, nickname, currentTime, lastSeenTime);
+		var message = ss.SetMessage(isOnline, nickname, currentTime, lastSeenTime);
 
 		// Assert
 		Assert.Equal((nickname, " was online this week"), message);
@@ -145,7 +146,7 @@ public class UnitTestUserStatusSolution
 		DateTime lastSeenTime = currentTime.AddDays(-39); // " was online a long time ago"
 
 		// Act
-		var message = UserStatusStorage.SetMessage(isOnline, nickname, currentTime, lastSeenTime);
+		var message = ss.SetMessage(isOnline, nickname, currentTime, lastSeenTime);
 
 		// Assert
 		Assert.Equal((nickname, " was online a long time ago"), message);

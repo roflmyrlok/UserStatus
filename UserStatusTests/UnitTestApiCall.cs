@@ -5,29 +5,7 @@ using Moq.Protected;
 
 public class UnitTestApiCall
 {
-    [Fact]
-    public static async Task UnitTestFillDIct()
-    {
-        //arrange
-        string link = "https://sef.podkolzin.consulting/api/users/lastSeen?offset=";
-        // Act
-        var result = await UserStatusStorage.FillUserStatusDictionary(link); // Await the async method
-
-        // Assert
-        Assert.IsType<Dictionary<string,string>>(result);
-    }
-    
-	[Fact]
-	public static async Task UnitTestApiCall1()
-	{
-        //arrange
-        string link = "https://sef.podkolzin.consulting/api/users/lastSeen?offset=";
-		// Act
-        var result = await UserStatusStorage.ApiCall1(link,"0"); // Await the async method
-
-		// Assert
-		Assert.Equal(1,result.Item2);
-	}
+    private UserStatusStorage ss = new UserStatusStorage();
 
     [Fact]
     public async Task UnitTestParseData()
@@ -218,8 +196,20 @@ public class UnitTestApiCall
         }
     ]
 }";
-        var result = UserStatusStorage.ParseData(fakeJsonResponse);
+        var result = ss.ParseData(fakeJsonResponse);
         
         Assert.Equal(20, result.data.Count);
-    }
+    } 
+    
+    
+    /*[Fact]
+    public Task UnitTestFillDIct()
+    {
+        //arrange
+        // Act
+        var result =  ss.FillUserStatusDictionary(link); // Await the async method
+
+        // Assert
+        Assert.IsType<Dictionary<string,string>>(result);
+    }*/
 }

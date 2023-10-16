@@ -9,4 +9,7 @@ public class UserData
 	public string registrationDate { get; set; }
 	public string lastSeenDate { get; set; }
 	public string isOnline { get; set; }
+
+	public List<TimeSegment> onlineStart { get; set; }
+	public List<TimeSegment> onlineEnd { get; set; }
 }

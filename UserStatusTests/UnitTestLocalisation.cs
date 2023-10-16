@@ -16,8 +16,9 @@ public class UnitTestLocalisation
 	[InlineData("unknown message", " був(ла) в мережі давно")]
 	public void TranslateToUkrainian_ReturnsExpectedTranslation(string engMessage, string expectedTranslation)
 	{
+		var ss = new UserStatusStorage();
 		// Act
-		string translatedMessage = UserStatusStorage.LocalisationUkr(engMessage);
+		string translatedMessage = ss.LocalisationUkr(engMessage);
 
 		// Assert
 		Assert.Equal(expectedTranslation, translatedMessage);
