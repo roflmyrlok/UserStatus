@@ -9,11 +9,10 @@ namespace UserStatusLibrary;
 public class UserStatusStorage
 {
 	public string format = "dd.MM.yyyy HH:mm";
-	public ResponseObject Users;
-
+	public ResponseObject users;
 	public UserStatusStorage()
 	{
-		Users = new ResponseObject();
+		users = new ResponseObject();
 	}
 
 	public (string, string) SetMessage(bool isOnline, string nickname, DateTime currentTime,
@@ -89,14 +88,14 @@ public class UserStatusStorage
 	public ResponseObject ParseData(string json)
 	{
 		var tempResponseObject = JsonConvert.DeserializeObject<ResponseObject>(json);
-		if (Users == null || tempResponseObject == null)
+		if (users == null || tempResponseObject == null)
 		{
-			throw new Exception("Users is not initialized");
+			throw new Exception("users is not initialized");
 		}
 
-		Users.data ??= new List<UserData>(); // Initialize Users.data if it's null
+		users.data ??= new List<UserData>(); // Initialize users.data if it's null
 		tempResponseObject.data ??= new List<UserData>();
-		Users.data.AddRange(tempResponseObject.data);
+		users.data.AddRange(tempResponseObject.data);
 		return tempResponseObject;
 	}
 
@@ -127,7 +126,7 @@ public class UserStatusStorage
 		return responseDictionary;
 	}
 
-	public Dictionary<string, UserData> ObserveUsers(string link, Dictionary<string, UserData> dictionaryReference)
+	public Dictionary<string, UserData> ObserveUsers(string link, Dictionary<string, UserData> dictionaryReference, List<string> forbiddenUsers)
 	{
 		var temp = dictionaryReference;
 		int offset = 0;
@@ -138,6 +137,13 @@ public class UserStatusStorage
 		{
 			foreach (var user in tempResponseObject.data)
 			{
+				if (forbiddenUsers != null)
+				{
+					if (forbiddenUsers.Contains(user.userId))
+					{
+						continue;
+					}
+				}
 				
 				if (!temp.ContainsKey(user.userId))
 				{

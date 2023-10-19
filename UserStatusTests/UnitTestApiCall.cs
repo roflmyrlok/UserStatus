@@ -199,17 +199,5 @@ public class UnitTestApiCall
         var result = ss.ParseData(fakeJsonResponse);
         
         Assert.Equal(20, result.data.Count);
-    } 
-    
-    
-    /*[Fact]
-    public Task UnitTestFillDIct()
-    {
-        //arrange
-        // Act
-        var result =  ss.FillUserStatusDictionary(link); // Await the async method
-
-        // Assert
-        Assert.IsType<Dictionary<string,string>>(result);
-    }*/
+    }
 }

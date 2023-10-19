@@ -9,31 +9,40 @@ using System;
 
 public class HistDataCore
 {
-	private bool saveRdy = false;
-	Dictionary<string,UserData> userDictionary;
-	public Dictionary<string, int> globalStats;
-	public UserStatusStorage UserStatusStorage;
-	private string format = "dd.MM.yyyy HH:mm";
+	private List<string> _forbiddenUsers;
+	private bool _saveRdy = false;
+	private Dictionary<string,UserData> _userDictionary;
+	private Dictionary<string, int> _globalStats;
+	private UserStatusStorage _userStatusStorage;
+	private readonly string _format = "dd.MM.yyyy HH:mm";
+	private readonly string _filePath1;
+	private readonly string _filePath2;
+	private readonly string _filePath3 = "forbidden.json";
 
 	public HistDataCore(string filePath1, string filePath2)
 	{
-		this.userDictionary = new Dictionary<string, UserData>();
-		this.globalStats = new Dictionary<string, int>();
-		UserStatusStorage = new UserStatusStorage();
+		_filePath1 = filePath1;
+		_filePath2 = filePath2;
+		this._forbiddenUsers = new List<string>{};
+		this._userDictionary = new Dictionary<string, UserData>();
+		this._globalStats = new Dictionary<string, int>();
+		_userStatusStorage = new UserStatusStorage();
 		if (File.Exists(filePath1) && File.Exists(filePath2))
 		{
-			string json1 = File.ReadAllText(filePath1);
-			string json2 = File.ReadAllText(filePath2);
+			string json1 = File.ReadAllText(_filePath1);
+			string json2 = File.ReadAllText(_filePath2);
+			string json3 = File.ReadAllText(_filePath3);
 
-			userDictionary = JsonConvert.DeserializeObject<Dictionary<string, UserData>>(json1);
-			globalStats = JsonConvert.DeserializeObject<Dictionary<string, int>>(json2);
+			_userDictionary = JsonConvert.DeserializeObject<Dictionary<string, UserData>>(json1);
+			_globalStats = JsonConvert.DeserializeObject<Dictionary<string, int>>(json2);
+			_forbiddenUsers = JsonConvert.DeserializeObject<List<string>>(json3);
 		}
 	}
 
 	public int GetOnlineUsers()
 	{
 		var counter = 0;
-		foreach (var user in userDictionary.Values)
+		foreach (var user in _userDictionary.Values)
 		{
 			if (user.isOnline == "true")
 			{
@@ -42,9 +51,9 @@ public class HistDataCore
 		}
 
 		var rn = DateTime.Now.ToString("dd.MM.yyyy HH:mm");
-		if (!globalStats.ContainsKey(rn))
+		if (!_globalStats.ContainsKey(rn))
 		{
-			globalStats.Add(DateTime.Now.ToString("dd.MM.yyyy HH:mm"),counter);
+			_globalStats.Add(DateTime.Now.ToString("dd.MM.yyyy HH:mm"),counter);
 		}
 		return counter;
 	}
@@ -62,64 +71,62 @@ public class HistDataCore
 	{
 		while (true)
 		{
-			userDictionary =  UserStatusStorage.ObserveUsers("https://sef.podkolzin.consulting/api/users/lastSeen?offset=", userDictionary);
+			_userDictionary =  _userStatusStorage.ObserveUsers("https://sef.podkolzin.consulting/api/users/lastSeen?offset=", _userDictionary, _forbiddenUsers);
 			GetOnlineUsers();
-			if (!saveRdy && userDictionary.Count != 0 && globalStats.Count != 0)
+			if (!_saveRdy && _userDictionary.Count != 0 && _globalStats.Count != 0)
 			{
 				SaveUserDictionary();
-				saveRdy = true;
+				_saveRdy = true;
 			}
 		}
 	}
 
 	public void SaveUserDictionary()
 	{ 
-		string jsonUserDictionary = JsonConvert.SerializeObject(userDictionary, Formatting.Indented);
-		string jsonGlobalStats = JsonConvert.SerializeObject(globalStats, Formatting.Indented);
-			
-		string filePath1 = "jsonUserDictionary.json";
-		string filePath2 = "jsonGlobalStats.json";
-		if (File.Exists(filePath1))
+		string jsonUserDictionary = JsonConvert.SerializeObject(_userDictionary, Formatting.Indented);
+		string jsonGlobalStats = JsonConvert.SerializeObject(_globalStats, Formatting.Indented);
+		string jsonForbidden = JsonConvert.SerializeObject(_forbiddenUsers, Formatting.Indented);
+		
+		if (File.Exists(_filePath1))
 		{
-			File.Delete(filePath1);
+			File.Delete(_filePath1);
 		}
-		if (File.Exists(filePath2))
+		if (File.Exists(_filePath2))
 		{
-			File.Delete(filePath2);
+			File.Delete(_filePath2);
 		}
+		if (File.Exists(_filePath3))
+		{
+			File.Delete(_filePath3);
+		}
+		
 
 		// Write the JSON data to the file.
-		File.WriteAllText(filePath1, jsonUserDictionary);
-		File.WriteAllText(filePath2, jsonGlobalStats);
+		File.WriteAllText(_filePath1, jsonUserDictionary);
+		File.WriteAllText(_filePath2, jsonGlobalStats);
+		File.WriteAllText(_filePath3, jsonForbidden);
 			
 	}
 
 	public int? GetUsersOnlineByData(string date)
 	{
 		var notFormattedDate = DateTime.Parse(date);
-		if (globalStats.ContainsKey(notFormattedDate.ToString(format)))
+		if (_globalStats.ContainsKey(notFormattedDate.ToString(_format)))
 		{
-			return globalStats[notFormattedDate.ToString(format)];
+			return _globalStats[notFormattedDate.ToString(_format)];
 		}
 		else return null;
 	}
 	
-	public string? WasUserOnline(string date, string id)
+	public (string?, string?)? WasUserOnline(string date, string id)
 	{
 		var notFormattedDate = DateTime.Parse(date);
-		var formattedDate = notFormattedDate.ToString(format);
-		if (!userDictionary.ContainsKey(id) || !globalStats.ContainsKey(formattedDate))
+		var formattedDate = notFormattedDate.ToString(_format);
+		if (!_userDictionary.ContainsKey(id) || !_globalStats.ContainsKey(formattedDate))
 		{
 			return null;
 		}
-		var user = userDictionary[id];
-		/*if (user.onlineStart.Count == 1)
-		{
-			if (user.onlineStart[0].end == null)
-			{
-				return null;
-			}
-		}*/
+		var user = _userDictionary[id];
 
 		DateTime? lastSeen = null;
 		foreach (var segment in user.onlineStart)
@@ -133,17 +140,17 @@ public class HistDataCore
 
 			if (segment.end == null)
 			{
-				return "user was online since " + formattedDate;
+				return ("true", null);
 			}
 			if (segment.end.HasValue && segment.end <= notFormattedDate)
 			{
-				return "user was online at " + formattedDate;
+				return ("true", null);
 			}
 		}
 
 		if (lastSeen.HasValue)
 		{
-			return "user was offline, last seen: " + lastSeen.Value.ToString(format);
+			return ("false", lastSeen.Value.ToString(_format));
 		}
 
 		return null;
@@ -157,7 +164,7 @@ public class HistDataCore
 		var notFormattedDate = DateTime.Parse(data);
 		var day = notFormattedDate.DayOfWeek;
 		var hour = notFormattedDate.Hour;
-		foreach (var entry in globalStats.Keys)
+		foreach (var entry in _globalStats.Keys)
 		{
 			var notFormattedEntry = DateTime.Parse(data);
 			var dayE = notFormattedEntry.DayOfWeek;
@@ -165,26 +172,26 @@ public class HistDataCore
 			if (day == dayE && hourE == hour)
 			{
 				obs++;
-				sum += globalStats[entry];
+				sum += _globalStats[entry];
 			}
 		}
 		return (sum/obs).ToString();
 	}
 
-	public string? predictOnlineForUser(string data, string tolerance, string id)
+	public (string?,string?)? predictOnlineForUser(string data, string tolerance, string id)
 	{
-		if (!userDictionary.ContainsKey(id))
+		if (!_userDictionary.ContainsKey(id))
 		{
 			return null;
 		}
 		var notFormattedDate = DateTime.Parse(data);
 		var requestDate = notFormattedDate.DayOfWeek;
 		
-		if (!userDictionary[id].onlineStart[0].start.HasValue)
+		if (!_userDictionary[id].onlineStart[0].start.HasValue)
 		{
 			return null;
 		}
-		var startDate = userDictionary[id].onlineStart[0].start.Value.Date;
+		var startDate = _userDictionary[id].onlineStart[0].start.Value.Date;
 		while (startDate.DayOfWeek != requestDate)
 		{
 			startDate = startDate.AddDays(1);
@@ -195,7 +202,7 @@ public class HistDataCore
 		while (startDate < currentDate)
 		{
 			total++;
-			foreach (var segment in userDictionary[id].onlineStart)
+			foreach (var segment in _userDictionary[id].onlineStart)
 			{
 				if (segment.start.Value.Date == startDate)
 				{
@@ -213,11 +220,83 @@ public class HistDataCore
 		var chance = passed / total;
 		if (chance >= Convert.ToDouble(tolerance))
 		{
-			return "willBeOnline: true, onlineChance:" + chance;
+			return ("true", chance.ToString());
 		}
 		else
 		{
-			return "willBeOnline: false, onlineChance:" + chance;
+			return ("false", chance.ToString());
 		}
+	}
+
+	public int? TotalTime(string id)
+	{
+		if (!_userDictionary.ContainsKey(id))
+		{
+			return null;
+		}
+
+		var user = _userDictionary[id];
+		var seconds = 0;
+		foreach (var segment in user.onlineStart)
+		{
+			if (!segment.start.HasValue)
+			{
+				continue;
+			}
+
+			if (!segment.end.HasValue)
+			{
+				seconds += (int)(DateTime.Now - segment.start.Value).TotalSeconds;
+				continue;
+			}
+			seconds += (int)(segment.end.Value - segment.start.Value).TotalSeconds;
+		}
+
+		return seconds;
+	}
+
+	public (string, string)? DailyWeeklyAverage(string id)
+	{
+		if (!_userDictionary.ContainsKey(id))
+		{
+			return null;
+		}
+		
+		var user = _userDictionary[id];
+		var dateTime = user.onlineStart[0].start;
+		if (dateTime == null)
+		{
+			return null;
+		}
+
+		var startingSegment = dateTime.Value;
+		var total = (int) (DateTime.Now - startingSegment).TotalSeconds;
+		var result = TotalTime(id);
+		if (result == null)
+		{
+			return null;
+		}
+
+		double daily = result.Value * 60 * 60 * 24 / total ;
+		return (daily.ToString(CultureInfo.CurrentCulture), (daily * 7).ToString(CultureInfo.CurrentCulture));
+	}
+
+	public string? RightToBeForgotten(string id, bool saveDb = true)
+	{
+		if (!_userDictionary.ContainsKey(id))
+		{
+			return null;
+		}
+		_userDictionary.Remove(id);
+		_forbiddenUsers.Add(id);
+		if (saveDb)
+		{
+			UpdateSave();
+		}
+		if (_userDictionary.ContainsKey(id))
+		{
+			return null;
+		}
+		return id;
 	}
 }
