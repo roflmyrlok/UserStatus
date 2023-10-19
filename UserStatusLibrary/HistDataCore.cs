@@ -27,6 +27,10 @@ public class HistDataCore
 		this._userDictionary = new Dictionary<string, UserData>();
 		this._globalStats = new Dictionary<string, int>();
 		_userStatusStorage = new UserStatusStorage();
+		if (!File.Exists(_filePath3))
+		{
+			File.Create(_filePath3);
+		}
 		if (File.Exists(filePath1) && File.Exists(filePath2))
 		{
 			string json1 = File.ReadAllText(_filePath1);
@@ -95,11 +99,6 @@ public class HistDataCore
 		{
 			File.Delete(_filePath2);
 		}
-		if (File.Exists(_filePath3))
-		{
-			File.Delete(_filePath3);
-		}
-		
 
 		// Write the JSON data to the file.
 		File.WriteAllText(_filePath1, jsonUserDictionary);
@@ -277,7 +276,8 @@ public class HistDataCore
 			return null;
 		}
 
-		double daily = result.Value * 60 * 60 * 24 / total ;
+		decimal dailyPercentage = (decimal)result.Value / (decimal)total;
+		Int128 daily = (Int128)(dailyPercentage * 60 * 60 * 24);
 		return (daily.ToString(CultureInfo.CurrentCulture), (daily * 7).ToString(CultureInfo.CurrentCulture));
 	}
 
