@@ -6,7 +6,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UserStatusTests", "UserStat
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WebApp", "WebApp\WebApp.csproj", "{97BA14D3-4DC5-471B-8D9A-E3B47CE5A89B}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "IntegrationTest2", "IntegrationTest2\IntegrationTest2.csproj", "{213A4503-9D8F-4A1E-B0E0-8E5BB2E34246}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TestsE2E", "TestsE2E\TestsE2E.csproj", "{213A4503-9D8F-4A1E-B0E0-8E5BB2E34246}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

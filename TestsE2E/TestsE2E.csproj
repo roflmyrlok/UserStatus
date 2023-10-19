@@ -6,6 +6,8 @@
         <Nullable>enable</Nullable>
 
         <IsPackable>false</IsPackable>
+
+        <RootNamespace>IntegrationTest2</RootNamespace>
     </PropertyGroup>
 
     <ItemGroup>
