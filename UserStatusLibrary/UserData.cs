@@ -11,5 +11,5 @@ public class UserData
 	public string isOnline { get; set; }
 
 	public List<TimeSegment> onlineStart { get; set; }
-	public List<TimeSegment> onlineEnd { get; set; }
+	//public List<TimeSegment> onlineEnd { get; set; }
 }

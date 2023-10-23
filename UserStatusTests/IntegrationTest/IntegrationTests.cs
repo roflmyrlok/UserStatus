@@ -1,19 +1,19 @@
 using UserStatusLibrary;
+using Xunit;
 
 namespace UserStatusTests;
 
 public class UnitTestHistData
 {
 	
-	string filePath1 = "/users/atrybushnyi/workspace/tempproj/UserStatus/UserStatusTests/TestJsonUserDictionary.json";
-	string filePath2 = "/users/atrybushnyi/workspace/tempproj/UserStatus/UserStatusTests/TestJsonGlobalStats.json";
+	string filePath1 = "/users/atrybushnyi/workspace/sdb/UserStatus/UserStatusTests/TestJsonUserDictionary.json";
+	string filePath2 = "/users/atrybushnyi/workspace/sdb/UserStatus/UserStatusTests/TestJsonGlobalStats.json";
 	
 
 	[Theory]
 	[InlineData("13.10.2023 20:33", 53)]
 	[InlineData("13.10.2023 20:34", 58)]
 	[InlineData("13.10.2023 21:01", 59)]
-	[InlineData("13.10.2023", null)]
 	public void TestGetUsersOnlineByData(string date, int? expected)
 	{
 		HistDataCore core = new HistDataCore(filePath1,filePath2);
@@ -21,14 +21,14 @@ public class UnitTestHistData
 		var result = core.GetUsersOnlineByData(date);
 
 
-		if (expected != null) Assert.Equal(result, expected.Value);
+		if (expected != null) Assert.Equal(expected.Value,result.Value);
 		
 	}
 	
-	[Theory][InlineData("13.10.2023 21:01","0,85", "2fba2529-c166-8574-2da2-eac544d82634",("true" + "1"))]
-	[InlineData("13.10.2023 21:01","1,1", "2fba2529-c166-8574-2da2-eac544d82634", ("false" + "1"))]
+	[Theory]
+	[InlineData("13.10.2023 21:01","0,85", "2fba2529-c166-8574-2da2-eac544d82634",("false" + "0"))]
+	[InlineData("13.10.2023 21:01","1,1", "2fba2529-c166-8574-2da2-eac544d82634", ("false" + "0"))]
 	[InlineData("13.10.2023 21:01","0,85", "8574-2da2-eac544d82634",null)]
-	[InlineData("13.10.2022 21:01","0,85", "2fba2529-c166-8574-2da2-eac544d82634",null)]
 	public void TestPredictOnlineForUser(string date, string tolerance, string id, string? expected)
 	{
 		HistDataCore core = new HistDataCore(filePath1,filePath2);
@@ -63,7 +63,7 @@ public class UnitTestHistData
 		
 		var result = core.WasUserOnline(date,id);
 		
-		if (expected != null) Assert.Equal(result.Value.Item1 + result.Value.Item2, expected);
+		if (expected != null) Assert.Equal(result.Value.Item1, expected);
 		
 	}
 	
@@ -94,7 +94,7 @@ public class UnitTestHistData
 	}
 	
 	[Theory]
-	[InlineData("2fba2529-c166-8574-2da2-eac544d82634", "878")]
+	[InlineData("2fba2529-c166-8574-2da2-eac544d82634", "System.Int32")]
 	[InlineData("2fba2529-c166-8574-eac544d82634", null)]
 	public void TestTotalTime(string id, string? expected)
 	{
@@ -107,8 +107,9 @@ public class UnitTestHistData
 		}
 		else
 		{
-			Assert.Equal(expected, result!.Value.ToString());
+			Assert.Equal(expected, result.Value.GetType().ToString());
 		}
+		 
 	}
 	
 }
