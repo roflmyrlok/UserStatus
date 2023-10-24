@@ -5,9 +5,10 @@ namespace UserStatusTests;
 
 public class UnitTestHistData
 {
+	static string tmp =  Directory.GetParent(Directory.GetParent(Directory.GetParent(Environment.CurrentDirectory).FullName).FullName).FullName;
+	string filePath1 = tmp +"/TestJsonUserDictionary.json";
+	string filePath2 = tmp +"/TestJsonGlobalStats.json";
 	
-	string filePath1 = "/users/atrybushnyi/workspace/sdb/UserStatus/UserStatusTests/TestJsonUserDictionary.json";
-	string filePath2 = "/users/atrybushnyi/workspace/sdb/UserStatus/UserStatusTests/TestJsonGlobalStats.json";
 	
 
 	[Theory]

@@ -1,4 +1,6 @@
+using Microsoft.Extensions.Configuration;
 using UserStatusLibrary;
+using System.IO;
 
 namespace UserStatusTests;
 
@@ -6,12 +8,13 @@ namespace UserStatusTests;
 public class ReportUnitTest
 {
 	[Fact]
-	public void testOnline()
+	public void testReport()
 	{
 		// Arrange
-		var path = "/Users/atrybushnyi/workspace/sdb/UserStatus/UserStatusTests/ReportTestData.json";
-		string filePath1 = "/users/atrybushnyi/workspace/sdb/UserStatus/UserStatusTests/TestJsonUserDictionary.json";
-		string filePath2 = "/users/atrybushnyi/workspace/sdb/UserStatus/UserStatusTests/TestJsonGlobalStats.json";
+		var tmp =  Directory.GetParent(Directory.GetParent(Directory.GetParent(Environment.CurrentDirectory).FullName).FullName).FullName;
+		var path = tmp + "/ReportTestData.json";
+		var filePath1 = tmp +"/TestJsonUserDictionary.json";
+		var filePath2 = tmp +"/TestJsonGlobalStats.json";
 		HistDataCore ss = new HistDataCore(filePath1, filePath2);
 
 		// Act
