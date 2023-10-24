@@ -181,7 +181,7 @@ public class HistDataCore
 			}
 		}
 
-		return (sum / obs).ToString();
+		return obs == 0 ? "null" : (sum / obs).ToString();
 	}
 
 	public (string?, string?)? predictOnlineForUser(string date, string tolerance, string id)
@@ -375,3 +375,4 @@ public class HistDataCore
 		return jsonString;
 	}
 }
+
