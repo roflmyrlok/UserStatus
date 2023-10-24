@@ -113,7 +113,7 @@ public class HistDataCore
 
 	public int? GetUsersOnlineByData(string date)
 	{
-		var notFormattedDate = DateTime.Parse(date);
+		var notFormattedDate = DateTime.ParseExact(date,_format,CultureInfo.InvariantCulture);
 		if (_globalStats.ContainsKey(notFormattedDate.ToString(_format)))
 		{
 			return _globalStats[notFormattedDate.ToString(_format)];
@@ -123,7 +123,7 @@ public class HistDataCore
 
 	public (string?, string?)? WasUserOnline(string date, string id)
 	{
-		var notFormattedDate = DateTime.Parse(date);
+		var notFormattedDate = DateTime.ParseExact(date,_format,CultureInfo.InvariantCulture);
 		var formattedDate = notFormattedDate.ToString(_format);
 		if (!_userDictionary.ContainsKey(id) || !_globalStats.ContainsKey(formattedDate))
 		{
@@ -162,16 +162,16 @@ public class HistDataCore
 
 	}
 
-	public string predictOnlineUsers(string data)
+	public string predictOnlineUsers(string date)
 	{
 		var obs = 0;
 		var sum = 0;
-		var notFormattedDate = DateTime.Parse(data);
+		var notFormattedDate = DateTime.ParseExact(date,_format,CultureInfo.InvariantCulture);
 		var day = notFormattedDate.DayOfWeek;
 		var hour = notFormattedDate.Hour;
 		foreach (var entry in _globalStats.Keys)
 		{
-			var notFormattedEntry = DateTime.Parse(data);
+			var notFormattedEntry = DateTime.ParseExact(entry,_format,CultureInfo.InvariantCulture);
 			var dayE = notFormattedEntry.DayOfWeek;
 			var hourE = notFormattedEntry.Hour;
 			if (day == dayE && hourE == hour)
@@ -184,14 +184,14 @@ public class HistDataCore
 		return (sum / obs).ToString();
 	}
 
-	public (string?, string?)? predictOnlineForUser(string data, string tolerance, string id)
+	public (string?, string?)? predictOnlineForUser(string date, string tolerance, string id)
 	{
 		if (!_userDictionary.ContainsKey(id))
 		{
 			return null;
 		}
 
-		var notFormattedDate = DateTime.Parse(data);
+		var notFormattedDate = DateTime.ParseExact(date,_format,CultureInfo.InvariantCulture);
 		var requestDate = notFormattedDate.DayOfWeek;
 
 		if (!_userDictionary[id].onlineStart[0].start.HasValue)
