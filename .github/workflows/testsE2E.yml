@@ -1,0 +1,26 @@
+name: E2E
+
+on:
+  push:
+    branches: [ "master" ]
+  pull_request:
+    branches: [ "master" ]
+
+jobs:
+  test-e2e:
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v3
+    - name: Setup .NET
+      uses: actions/setup-dotnet@v3
+      
+    - name: Publish
+      run: dotnet publish -o out
+    - name: Run
+      run: |
+        dotnet out/WebApp.dll
+        dotnet test TestsE2E
+
+
