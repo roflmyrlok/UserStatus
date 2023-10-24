@@ -18,6 +18,8 @@ app.MapGet("/api/predictions/users", Predictions);
 app.MapPost("/api/user/forget", Forget);
 app.MapGet("/api/stats/user/total", Total);
 app.MapGet("/api/stats/user/average", Average);
+app.MapPost("/api/report/{REPORT_NAME}", ReportHandlerPost);
+app.MapGet("/api/report/{REPORT_NAME}", ReportHandlerGet);
 
 app.UseEndpoints(endpoints =>
 {
@@ -82,6 +84,23 @@ object? Average(string? userId)
 
     var result = programInstance.DailyWeeklyAverage(userId);
     return new {weeklyAverage = result.Value.Item1, dailyAverage = result.Value.Item2};
+}
+
+object? ReportHandlerPost(string? reportName, string? reportData)
+{
+    if (reportData == null && reportName == null)
+    {
+        var b = "bad";
+        return new {b};
+    }
+    var result = programInstance.Report(reportName, reportData);
+    return new {result};
+}
+
+object? ReportHandlerGet(string? reportName)
+{
+    var result = programInstance.ReturnReport(reportName);
+    return result;
 }
 
 
