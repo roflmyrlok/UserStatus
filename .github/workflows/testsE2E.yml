@@ -20,7 +20,8 @@ jobs:
       run: dotnet publish -o out
     - name: Run
       run: |
-        dotnet out/WebApp.dll
-        dotnet test TestsE2E
+        dotnet out/WebApp.dll & while ! nc -z localhost 5000; do sleep 1; done &
+        echo "API is up" &
+        echo "===========================" & dotnet test TestsE2E
 
 
