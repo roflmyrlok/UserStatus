@@ -6,7 +6,7 @@
     WorkingDirectory=/server/output
     # systemd will run this executable to start the service
     # if /usr/bin/dotnet doesn't work, use `which dotnet` to find correct dotnet executable path
-    ExecStart=/usr/bin/dotnet /server/.out/WebApp.dll --urls=http://[::]/
+    ExecStart=/usr/bin/dotnet /server/UserStatus/.out/WebApp.dll --urls=http://[::]/
     # to query logs using journalctl, set a logical name here  
     SyslogIdentifier=UserStatus
     
