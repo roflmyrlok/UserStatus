@@ -11,7 +11,7 @@ public class HistDataCore
 {
 	private List<string> _forbiddenUsers;
 	private bool _saveRdy = false;
-	private Dictionary<string,UserData> _userDictionary;
+	private Dictionary<string, UserData> _userDictionary;
 	private Dictionary<string, int> _globalStats;
 	private UserStatusStorage _userStatusStorage;
 	private readonly string _format = "dd.MM.yyyy HH:mm";
@@ -23,7 +23,7 @@ public class HistDataCore
 	{
 		_filePath1 = filePath1;
 		_filePath2 = filePath2;
-		this._forbiddenUsers = new List<string>{};
+		this._forbiddenUsers = new List<string> { };
 		this._userDictionary = new Dictionary<string, UserData>();
 		this._globalStats = new Dictionary<string, int>();
 		_userStatusStorage = new UserStatusStorage();
@@ -31,6 +31,7 @@ public class HistDataCore
 		{
 			File.Create(_filePath3);
 		}
+
 		if (File.Exists(filePath1) && File.Exists(filePath2))
 		{
 			string json1 = File.ReadAllText(_filePath1);
@@ -57,8 +58,9 @@ public class HistDataCore
 		var rn = DateTime.Now.ToString("dd.MM.yyyy HH:mm");
 		if (!_globalStats.ContainsKey(rn))
 		{
-			_globalStats.Add(DateTime.Now.ToString("dd.MM.yyyy HH:mm"),counter);
+			_globalStats.Add(DateTime.Now.ToString("dd.MM.yyyy HH:mm"), counter);
 		}
+
 		return counter;
 	}
 
@@ -70,12 +72,13 @@ public class HistDataCore
 			Thread.Sleep(1000);
 		}
 	}
-	
+
 	public void UpdateUsersDictionary()
 	{
 		while (true)
 		{
-			_userDictionary =  _userStatusStorage.ObserveUsers("https://sef.podkolzin.consulting/api/users/lastSeen?offset=", _userDictionary, _forbiddenUsers);
+			_userDictionary = _userStatusStorage.ObserveUsers(
+				"https://sef.podkolzin.consulting/api/users/lastSeen?offset=", _userDictionary, _forbiddenUsers);
 			GetOnlineUsers();
 			if (!_saveRdy && _userDictionary.Count != 0 && _globalStats.Count != 0)
 			{
@@ -86,15 +89,16 @@ public class HistDataCore
 	}
 
 	public void SaveUserDictionary()
-	{ 
+	{
 		string jsonUserDictionary = JsonConvert.SerializeObject(_userDictionary, Formatting.Indented);
 		string jsonGlobalStats = JsonConvert.SerializeObject(_globalStats, Formatting.Indented);
 		string jsonForbidden = JsonConvert.SerializeObject(_forbiddenUsers, Formatting.Indented);
-		
+
 		if (File.Exists(_filePath1))
 		{
 			File.Delete(_filePath1);
 		}
+
 		if (File.Exists(_filePath2))
 		{
 			File.Delete(_filePath2);
@@ -104,27 +108,28 @@ public class HistDataCore
 		File.WriteAllText(_filePath1, jsonUserDictionary);
 		File.WriteAllText(_filePath2, jsonGlobalStats);
 		File.WriteAllText(_filePath3, jsonForbidden);
-			
+
 	}
 
 	public int? GetUsersOnlineByData(string date)
 	{
-		var notFormattedDate = DateTime.Parse(date);
+		var notFormattedDate = DateTime.ParseExact(date,_format,CultureInfo.InvariantCulture);
 		if (_globalStats.ContainsKey(notFormattedDate.ToString(_format)))
 		{
 			return _globalStats[notFormattedDate.ToString(_format)];
 		}
 		else return null;
 	}
-	
+
 	public (string?, string?)? WasUserOnline(string date, string id)
 	{
-		var notFormattedDate = DateTime.Parse(date);
+		var notFormattedDate = DateTime.ParseExact(date,_format,CultureInfo.InvariantCulture);
 		var formattedDate = notFormattedDate.ToString(_format);
 		if (!_userDictionary.ContainsKey(id) || !_globalStats.ContainsKey(formattedDate))
 		{
 			return null;
 		}
+
 		var user = _userDictionary[id];
 
 		DateTime? lastSeen = null;
@@ -141,6 +146,7 @@ public class HistDataCore
 			{
 				return ("true", null);
 			}
+
 			if (segment.end.HasValue && segment.end <= notFormattedDate)
 			{
 				return ("true", null);
@@ -156,16 +162,16 @@ public class HistDataCore
 
 	}
 
-	public string predictOnlineUsers(string data)
+	public string predictOnlineUsers(string date)
 	{
 		var obs = 0;
 		var sum = 0;
-		var notFormattedDate = DateTime.Parse(data);
+		var notFormattedDate = DateTime.ParseExact(date,_format,CultureInfo.InvariantCulture);
 		var day = notFormattedDate.DayOfWeek;
 		var hour = notFormattedDate.Hour;
 		foreach (var entry in _globalStats.Keys)
 		{
-			var notFormattedEntry = DateTime.Parse(data);
+			var notFormattedEntry = DateTime.ParseExact(entry,_format,CultureInfo.InvariantCulture);
 			var dayE = notFormattedEntry.DayOfWeek;
 			var hourE = notFormattedEntry.Hour;
 			if (day == dayE && hourE == hour)
@@ -174,27 +180,31 @@ public class HistDataCore
 				sum += _globalStats[entry];
 			}
 		}
-		return (sum/obs).ToString();
+
+		return obs == 0 ? "null" : (sum / obs).ToString();
 	}
 
-	public (string?,string?)? predictOnlineForUser(string data, string tolerance, string id)
+	public (string?, string?)? predictOnlineForUser(string date, string tolerance, string id)
 	{
 		if (!_userDictionary.ContainsKey(id))
 		{
 			return null;
 		}
-		var notFormattedDate = DateTime.Parse(data);
+
+		var notFormattedDate = DateTime.ParseExact(date,_format,CultureInfo.InvariantCulture);
 		var requestDate = notFormattedDate.DayOfWeek;
-		
+
 		if (!_userDictionary[id].onlineStart[0].start.HasValue)
 		{
 			return null;
 		}
+
 		var startDate = _userDictionary[id].onlineStart[0].start.Value.Date;
 		while (startDate.DayOfWeek != requestDate)
 		{
 			startDate = startDate.AddDays(1);
 		}
+
 		var currentDate = DateTime.Today;
 		var total = 0;
 		var passed = 0;
@@ -209,6 +219,7 @@ public class HistDataCore
 					break;
 				}
 			}
+
 			startDate = startDate.AddDays(7);
 		}
 
@@ -216,6 +227,7 @@ public class HistDataCore
 		{
 			return null;
 		}
+
 		var chance = passed / total;
 		if (chance >= Convert.ToDouble(tolerance))
 		{
@@ -245,10 +257,11 @@ public class HistDataCore
 
 			if (!segment.end.HasValue)
 			{
-				seconds += (int)(DateTime.Now - segment.start.Value).TotalSeconds;
+				seconds += (int) (DateTime.Now - segment.start.Value).TotalSeconds;
 				continue;
 			}
-			seconds += (int)(segment.end.Value - segment.start.Value).TotalSeconds;
+
+			seconds += (int) (segment.end.Value - segment.start.Value).TotalSeconds;
 		}
 
 		return seconds;
@@ -260,7 +273,7 @@ public class HistDataCore
 		{
 			return null;
 		}
-		
+
 		var user = _userDictionary[id];
 		var dateTime = user.onlineStart[0].start;
 		if (dateTime == null)
@@ -276,8 +289,8 @@ public class HistDataCore
 			return null;
 		}
 
-		decimal dailyPercentage = (decimal)result.Value / (decimal)total;
-		Int128 daily = (Int128)(dailyPercentage * 60 * 60 * 24);
+		decimal dailyPercentage = (decimal) result.Value / (decimal) total;
+		Int128 daily = (Int128) (dailyPercentage * 60 * 60 * 24);
 		return (daily.ToString(CultureInfo.CurrentCulture), (daily * 7).ToString(CultureInfo.CurrentCulture));
 	}
 
@@ -287,16 +300,79 @@ public class HistDataCore
 		{
 			return null;
 		}
+
 		_userDictionary.Remove(id);
 		_forbiddenUsers.Add(id);
 		if (saveDb)
 		{
 			UpdateSave();
 		}
+
 		if (_userDictionary.ContainsKey(id))
 		{
 			return null;
 		}
+
 		return id;
 	}
+
+	public string Report(string reportName, string reportData)
+	{
+		var path = "" + reportName;
+		var tmp = ReportParse(reportData);
+		var result = new Dictionary<string, List<string>>();
+		result.Add("metrics", tmp.Metrics);
+		foreach (var user in tmp.Users )
+		{
+			if (!_userDictionary.ContainsKey(user))
+			{
+				continue;
+			}
+			result.Add(user, new List<string>());
+			if (tmp.Metrics.Contains("dailyAverage"))
+			{
+				result[user].Add(DailyWeeklyAverage(user).Value.Item1);
+			}
+			if (tmp.Metrics.Contains("weeklyAverage"))
+			{
+				result[user].Add(DailyWeeklyAverage(user).Value.Item2);
+			}
+			if (tmp.Metrics.Contains("total"))
+			{
+				result[user].Add(TotalTime(user).Value.ToString());
+			}
+		}
+		string resultSerializeObject = JsonConvert.SerializeObject(result, Formatting.Indented);
+
+		if (File.Exists(path))
+		{
+			File.Delete(path);
+		}
+		File.WriteAllText(path, resultSerializeObject);
+		return "{}";
+	}
+
+	class ReportData
+	{
+		public List<string> Metrics { get; set; }
+		public List<string> Users { get; set; }
+	}
+
+	ReportData ReportParse(string json)
+	{
+		ReportData data = JsonConvert.DeserializeObject<ReportData>(json);
+		return data;
+	}
+
+	public string? ReturnReport(string reportName)
+	{
+		if (!File.Exists(reportName))
+		{
+			return null;
+		}
+		string[] jsonLines = File.ReadAllLines(reportName);
+		string jsonString = string.Join("", jsonLines);
+		return jsonString;
+	}
 }
+
