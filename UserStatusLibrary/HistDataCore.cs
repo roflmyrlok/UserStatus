@@ -315,10 +315,6 @@ public class HistDataCore
 
 		_userDictionary.Remove(id);
 		_forbiddenUsers.Add(id);
-		if (saveDb)
-		{
-			UpdateSave();
-		}
 
 		if (_userDictionary.ContainsKey(id))
 		{

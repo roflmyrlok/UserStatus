@@ -1,4 +1,5 @@
 using System.Globalization;
+using System.Runtime.InteropServices.JavaScript;
 using System.Text.Json;
 using Newtonsoft.Json;
 using JsonSerializer = System.Text.Json.JsonSerializer;
@@ -181,7 +182,10 @@ public class UserStatusStorage
 				}
 				else
 				{
-					lastSegment.end ??= currTime;
+					if (lastSegment.end == null)
+					{
+						lastSegment.end = currTime;
+					}
 				}
 			}
 
