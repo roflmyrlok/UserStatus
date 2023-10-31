@@ -70,7 +70,11 @@ object? Predictions(string? date, string? tolerance, string? userId)
     if (tolerance != null && userId != null)
     {
         var result = programInstance!.predictOnlineForUser(date, tolerance, userId);
-        return new {willBeOnline = result!.Value.Item1, onlineChance = result.Value.Item2};
+        if (result == null)
+        {
+            return null;
+        }
+        return new {willBeOnline = result.Value.Item1, onlineChance = result.Value.Item2};
     }
     else
     {

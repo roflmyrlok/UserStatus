@@ -8,7 +8,7 @@ namespace UserStatusLibrary;
 
 public class UserStatusStorage
 {
-	public string format = "dd.MM.yyyy HH:mm";
+	public string format = "dd.MM.yyyy-HH:mm";
 	public ResponseObject users;
 	public UserStatusStorage()
 	{
@@ -129,6 +129,10 @@ public class UserStatusStorage
 	public Dictionary<string, UserData> ObserveUsers(string link, Dictionary<string, UserData> dictionaryReference, List<string> forbiddenUsers)
 	{
 		var temp = dictionaryReference;
+		if (temp == null)
+		{
+			temp = new Dictionary<string, UserData>();
+		}
 		int offset = 0;
 		var currTime = DateTime.Now;
 		var tempTry = ApiCall1(link + offset.ToString());

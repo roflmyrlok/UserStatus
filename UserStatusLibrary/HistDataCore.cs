@@ -14,7 +14,7 @@ public class HistDataCore
 	private Dictionary<string, UserData> _userDictionary;
 	private Dictionary<string, int> _globalStats;
 	private UserStatusStorage _userStatusStorage;
-	private readonly string _format = "dd.MM.yyyy HH:mm";
+	private readonly string _format = "dd.MM.yyyy-HH:mm";
 	private readonly string _filePath1;
 	private readonly string _filePath2;
 	private readonly string _filePath3 = "forbidden.json";
@@ -42,6 +42,18 @@ public class HistDataCore
 			_globalStats = JsonConvert.DeserializeObject<Dictionary<string, int>>(json2);
 			_forbiddenUsers = JsonConvert.DeserializeObject<List<string>>(json3);
 		}
+		if (_globalStats == null)
+		{
+			_globalStats = new Dictionary<string, int>();
+		}
+		if (_forbiddenUsers == null)
+		{
+			_forbiddenUsers = new List<string>();
+		}
+		if (_userDictionary == null)
+		{
+			_userDictionary = new Dictionary<string, UserData>();
+		}
 	}
 
 	public int GetOnlineUsers()
@@ -55,10 +67,10 @@ public class HistDataCore
 			}
 		}
 
-		var rn = DateTime.Now.ToString("dd.MM.yyyy HH:mm");
+		var rn = DateTime.Now.ToString(_format);
 		if (!_globalStats.ContainsKey(rn))
 		{
-			_globalStats.Add(DateTime.Now.ToString("dd.MM.yyyy HH:mm"), counter);
+			_globalStats.Add(DateTime.Now.ToString(_format), counter);
 		}
 
 		return counter;
