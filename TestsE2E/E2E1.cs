@@ -6,13 +6,13 @@ public class Tests
 {
 	private const string BaseUrl = "http://localhost:5000/";
 	[Theory]
-	[InlineData("api/stats/users/?date=13.10.2023 21:01","{\"usersOnline\":59}")]
-	[InlineData("api/stats/users/?date=13.10.1999 21:01","null")]
-	[InlineData("api/stats/users/?date=13.10.2023 21:01&userId=2fba2529-c166-8574-2da2-eac544d82634" ,"timeless")]
-	[InlineData("api/predictions/users/?date=13.10.2025 23:33","timeless")]
-	[InlineData("api/predictions/users/?date=13.10.2025 23:33&userId=2fba2529-c166-8574-2da2-eac544d82634&tolerance=0,85","timeless")]
-	[InlineData("api/stats/user/total/?userId=2fba2529-c166-8574-2da2-eac544d82634","timeless")]
-	[InlineData("api/stats/user/average/?userId=2fba2529-c166-8574-2da2-eac544d82634","timeless")]
+	[InlineData("api/users?date=31.10.2023%2015:45","timeless")]
+	[InlineData("api/users?date=13.10.1999%2021:01","null")]
+	[InlineData("api/users?date=13.10.2023%2021:01&userid=2fba2529-c166-8574-2da2-eac544d82634" ,"{\"wasUserOnline\":\"true\",\"nearestOnlineTime\":null}")]
+	[InlineData("api/predictions?date=13.10.2025 23:33","timeless")]
+	[InlineData("api/predictions?date=13.10.2025 23:33&userId=2fba2529-c166-8574-2da2-eac544d82634&tolerance=0,85","{\"willBeOnline\":\"false\",\"onlineChance\":\"0\"}")]
+	[InlineData("api/total?userID=2fba2529-c166-8574-2da2-eac544d82634","timeless")]//"{\"totalTime\":482047}"
+	[InlineData("api/average?userId=2fba2529-c166-8574-2da2-eac544d82634","timeless")]//"{\"weeklyAverage\":86261,\"dailyAverage\":603827}"
 	public async Task IntegrationTestStatus(string link, string expected)
 	{
 		using (HttpClient client = new HttpClient())
