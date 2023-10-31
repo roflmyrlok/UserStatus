@@ -1,4 +1,4 @@
-﻿
+
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -13,13 +13,15 @@ Task.Run(programInstance.UpdateUsersDictionary);
 Task.Run(programInstance.UpdateSave);
 app.UseRouting();
 
-app.MapGet("/api/stats/users", Stats);
-app.MapGet("/api/predictions/users", Predictions);
-app.MapPost("/api/user/forget", Forget);
-app.MapGet("/api/stats/user/total", Total);
-app.MapGet("/api/stats/user/average", Average);
+app.MapGet("/api/users", Stats);
+app.MapGet("/api/total", Total);
+app.MapGet("/api/average", Average);
+app.MapGet("/api/predictions", Predictions);
+app.MapPost("/api/forget", Forget);
 app.MapPost("/api/report/{REPORT_NAME}", ReportHandlerPost);
 app.MapGet("/api/report/{REPORT_NAME}", ReportHandlerGet);
+app.MapGet("/", Base);
+
 
 app.UseEndpoints(endpoints =>
 {
@@ -28,7 +30,19 @@ app.UseEndpoints(endpoints =>
 
 app.Run();
 
-
+object? Base()
+{
+    return new
+    {
+        usersOnline = "/api/users?date=x",
+        wasUserOnline = "/api/users?date=x&userid=y",
+        userTotalOnlineTime = "/api/total?userid=x",
+        userAvgTime = "/api/average?userid=x",
+        predictUserOnline = "/api/predictions?date=x&userId=y&tolerance=z",
+        predictTotalUsersOnline = "/api/predictions?date=x",
+        forgetUser = "/api/forget?userid=x"
+    };
+}
 object? Stats(string? date, string? userId)
 {
     if (userId != null && date != null)
