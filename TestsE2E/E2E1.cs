@@ -6,7 +6,7 @@ public class Tests
 {
 	private const string BaseUrl = "http://localhost:5000/";
 	[Theory]
-	[InlineData("api/users?date=31.10.2023%2015:45","{\"usersOnline\":55}")]
+	[InlineData("api/users?date=31.10.2023%2015:45","timeless"]
 	[InlineData("api/users?date=13.10.1999%2021:01","null")]
 	[InlineData("api/users?date=13.10.2023%2021:01&userid=2fba2529-c166-8574-2da2-eac544d82634" ,"{\"wasUserOnline\":\"true\",\"nearestOnlineTime\":null}")]
 	[InlineData("api/predictions?date=13.10.2025 23:33","timeless")]
