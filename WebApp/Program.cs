@@ -121,7 +121,7 @@ object? ReportHandlerGet(string? reportName)
 object? UserListHandler()
 {
     var result = programInstance.ListOfUsers();
-    return new {response = result};
+    return result;
 }
 
 
