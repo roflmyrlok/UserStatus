@@ -13,6 +13,7 @@ public class Tests
 	[InlineData("api/predictions?date=13.10.2025-23:33&8b0b5db6-19d6-d777-575e-915c2a77959a&tolerance=0,85","timeless")]
 	[InlineData("api/total?userID=8b0b5db6-19d6-d777-575e-915c2a77959a","timeless")]//"{\"totalTime\":482047}"
 	[InlineData("api/average?userId=8b0b5db6-19d6-d777-575e-915c2a77959a","timeless")]//"{\"weeklyAverage\":86261,\"dailyAverage\":603827}"
+	[InlineData("api/users/list","timeless")]
 	public async Task IntegrationTestStatus(string link, string expected)
 	{
 		using (HttpClient client = new HttpClient())

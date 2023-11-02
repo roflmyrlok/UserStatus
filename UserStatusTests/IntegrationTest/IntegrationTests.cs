@@ -113,4 +113,16 @@ public class UnitTestHistData
 		 
 	}
 	
+	[Theory]
+	[InlineData("System.String")]
+	public void TestListOfUsers( string? expected)
+	{
+		HistDataCore core = new HistDataCore(filePath1,filePath2);
+
+		var result = core.ListOfUsers();
+		var type = result.GetType().ToString();
+		Assert.Equal(expected, type);
+		 
+	}
+	
 }

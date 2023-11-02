@@ -382,5 +382,36 @@ public class HistDataCore
 		string jsonString = string.Join("", jsonLines);
 		return jsonString;
 	}
+
+	public string ListOfUsers()
+	{
+		var resultList = new List<Dictionary<string, string>>();
+		foreach (var user in _userDictionary.Values)
+		{
+			var currNickname = user.nickname;
+			var currId = user.userId;
+			string currFirstSeen;
+			if (user.onlineStart.Count != 0 && user.onlineStart[0].start != null)
+			{ 
+				currFirstSeen = user.onlineStart[0].start.ToString();
+			}
+			else
+			{
+				currFirstSeen = "never";
+			}
+			
+			
+			var currDict = new Dictionary<string, string>
+			{
+				{"username", currNickname},
+				{"userId", currId},
+				{"firstSeen", currFirstSeen}
+			};
+			resultList.Add(currDict);
+		}
+
+		var result = JsonConvert.SerializeObject(resultList);
+		return result;
+	}
 }
 

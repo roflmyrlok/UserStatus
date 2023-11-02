@@ -1,5 +1,7 @@
 
 
+using UserStatusLibrary;
+
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddControllers();
@@ -20,7 +22,9 @@ app.MapGet("/api/predictions", Predictions);
 app.MapPost("/api/forget", Forget);
 app.MapPost("/api/report/{REPORT_NAME}", ReportHandlerPost);
 app.MapGet("/api/report/{REPORT_NAME}", ReportHandlerGet);
+app.MapGet("/api/users/list", UserListHandler);
 app.MapGet("/", Base);
+
 
 
 app.UseEndpoints(endpoints =>
@@ -59,7 +63,6 @@ object? Stats(string? date, string? userId)
 
     return null;
 }
-
 object? Predictions(string? date, string? tolerance, string? userId)
 {
     if (date == null)
@@ -83,19 +86,16 @@ object? Predictions(string? date, string? tolerance, string? userId)
     }
     return null;
 }
-
 object? Forget(string? userId)
 {
     if (userId == null) { return null;}
     return new {userId = programInstance.RightToBeForgotten(userId)};
 }
-
 object? Total(string? userId)
 {
     if (userId == null) { return null;}
     return new {totalTime = programInstance.TotalTime(userId)};
 }
-
 object? Average(string? userId)
 {
     if (userId == null) { return null;}
@@ -103,7 +103,6 @@ object? Average(string? userId)
     var result = programInstance.DailyWeeklyAverage(userId);
     return new {weeklyAverage = result.Value.Item1, dailyAverage = result.Value.Item2};
 }
-
 object? ReportHandlerPost(string? reportName, string? reportData)
 {
     if (reportData == null && reportName == null)
@@ -114,11 +113,15 @@ object? ReportHandlerPost(string? reportName, string? reportData)
     var result = programInstance.Report(reportName, reportData);
     return new {result};
 }
-
 object? ReportHandlerGet(string? reportName)
 {
     var result = programInstance.ReturnReport(reportName);
     return result;
+}
+object? UserListHandler()
+{
+    var result = programInstance.ListOfUsers();
+    return new {response = result};
 }
 
 
